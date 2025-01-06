@@ -1,0 +1,334 @@
+<template>
+	<lightning-card title="Dynamic DataTable">
+		<div class="slds-m-around_medium">
+	
+		  <!-- Header Section with Buttons -->
+		  <div class="slds-grid slds-wrap slds-m-bottom_medium slds-align_absolute-center">
+			<div class="slds-col slds-size_10-of-12">
+			  <lightning-input 
+				type="search" 
+				label="Search" 
+				onchange={handleKeyChange} 
+				class="slds-m-bottom_small" 
+				style="padding-left: 12px; overflow: hidden;"
+				value={searchKey}>
+			  </lightning-input>
+			</div>
+			<div class="slds-col slds-size_2-of-12 slds-text-align_right" style="margin-top: 11px;">
+			  <lightning-button-group>
+				<lightning-button-icon 
+				  icon-name="utility:filterList" 
+				  alternative-text="Filter" 
+				  title="Filter" 
+				  onclick={showModalBox}>
+				</lightning-button-icon>
+				<lightning-button 
+				  label="Delete" 
+				  onclick={handleDeleteClick}>
+				</lightning-button>
+				<lightning-button 
+				  label="Refresh" 
+				  onclick={handleRefresh}>
+				</lightning-button>
+				<lightning-button 
+				  label="New" 
+				  onclick={handleNewClick}>
+				</lightning-button>
+			  </lightning-button-group>
+			</div>
+		</div>
+		</div>
+	<!-- <template if:true={newButtonVariable}> -->
+		<!-- <lightning-button label="New" onclick={openModal} variant="brand"></lightning-button> -->
+		<!--
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <div class="slds-modal slds-fade-in-open" role="dialog" aria-modal="true">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">New Subprogram</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" size="medium"></lightning-icon>
+                    </button>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium">
+					<lightning-record-edit-form
+					object-api-name="Account"
+				  >
+				  <lightning-input-field field-name="First_Report_Due__c"></lightning-input-field>
+				
+				</lightning-record-edit-form>
+                </div>
+            </div>
+        </div>
+-->
+		<!-- Error Message -->
+		<template if:true={error}>
+			<div class="slds-text-color_error slds-m-bottom_medium">
+			  {error}
+			</div>
+		  </template>
+
+		  <c-custom-image-data-table data-id="table" key-field="Id" data={data} columns={columns} sorted-by={sortBy}
+			sorted-direction={sortDirection} onsort={doSorting} onrowselection={onRowSelection}
+				selected-rows={allSelectedRows} onrowaction={handleRowAction} onsave={handleSave}
+          draft-values={draftValues} 
+		  >
+		   <!-- <c-image-cell image-url={row.ImageURL} image-title={row.Name}></c-image-cell> -->
+		  </c-custom-image-data-table>
+			<div class="slds-m-top_medium">
+				<lightning-layout horizontal-align="space">
+				  <lightning-layout-item flexibility="auto">
+					<lightning-button 
+					  label="Previous" 
+					  icon-name="utility:chevronleft" 
+					  onclick={previousHandler}>
+					</lightning-button>
+				  </lightning-layout-item>
+				  <lightning-layout-item flexibility="auto">
+					Page {page} of {totalPage}
+				  </lightning-layout-item>
+				  <lightning-layout-item flexibility="auto">
+					<lightning-button 
+					  label="Next" 
+					  icon-name="utility:chevronright" 
+					  icon-position="right" 
+					  onclick={nextHandler}>
+					</lightning-button>
+				  </lightning-layout-item>
+				</lightning-layout>
+			  </div>
+<template if:true={newButtonVariable}>
+	<!-- Backdrop -->
+	<div class="slds-backdrop slds-backdrop_open"></div>
+
+	<!-- Modal Dialog -->
+	<div class="slds-modal slds-fade-in-open" role="dialog" aria-modal="true">
+		<div class="slds-modal__container">
+			
+			<!-- Modal Header -->
+			<header class="slds-modal__header">
+				<h2 class="slds-text-heading_medium">Create New Record</h2>
+				<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+					<lightning-icon icon-name="utility:close" size="medium"></lightning-icon>
+					<span class="slds-assistive-text">Close</span>
+				</button>
+			</header>
+			
+			<!-- Modal Content -->
+			<div class="slds-modal__content slds-p-around_medium">
+				<lightning-record-edit-form
+					object-api-name={objAPIName}
+					record-id={recordId}
+					onsuccess={handleSuccess}
+					onerror={handleError}
+				>
+					<!-- Render dynamic fields -->
+					<template if:true={fields}>
+						<template for:each={fields} for:item="field">
+							<lightning-input-field 
+								key={field} 
+								field-name={field}>
+							</lightning-input-field>
+						</template>
+					</template>
+
+					<!-- Display error message if fields fail to load -->
+					<template if:true={error}>
+						<div class="slds-text-color_error">
+							An error occurred while loading fields.
+						</div>
+					</template>
+
+					<!-- Modal Footer with Buttons -->
+					<footer class="slds-modal__footer slds-grid slds-grid_align-end">
+						<lightning-button 
+							type="submit" 
+							label="Save" 
+							variant="brand">
+						</lightning-button>
+						<lightning-button 
+							type="button" 
+							label="Cancel" 
+							onclick={closeModal} 
+							class="slds-m-left_small">
+						</lightning-button>
+					</footer>
+				</lightning-record-edit-form>
+			</div>
+			
+		</div>
+	</div>
+</template>
+	<div class="slds-m-around_medium">
+        <!-- Your search and filter options -->
+    
+	   
+		<!-- <template if:true={isShowModal}>
+			<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+				aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+				<div class="slds-modal__container">
+					<header class="slds-modal__header">
+						<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+							title="Close" onclick={hideModalCancledBox}>
+							<lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse"
+								size="small"></lightning-icon>
+							<span class="slds-assistive-text">Close</span>
+						</button>
+						<h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate"> Filters
+						</h2>
+					</header>
+					<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1"> -->
+						<template if:true={isShowModal}>
+							<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+							  aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+							  <div class="slds-modal__container">
+								<header class="slds-modal__header">
+								  <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={hideModalCancledBox}>
+									<lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+								  </button>
+								  <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Filters</h2>
+								</header>
+								<div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+						<template if:true={filterArr}>
+							<ul class="slds-has-dividers_around-space slds-var-m-around_small">
+								<!-- <ul class="slds-list_horizontal slds-has-dividers_around-space slds-var-m-around_small"> -->
+								<template for:each={filterArr} for:item="filterItem" for:index="index">
+									<li class="slds-item" key={filterItem.id}>
+										<lightning-layout vertical-align="center" horizontal-align="spread">
+											<!-- <lightning-layout-item size="1">{filterItem.id}.</lightning-layout-item> -->
+											<lightning-layout-item title={filterItem.id} tabindex={filterItem.name}
+												size="9">
+												<div onclick={editFilterCriteria} data-id={filterItem.id}
+													data-list={filterItem}
+													style="width:272px; cursor: pointer; display: flex;">
+													<div title={filterItem.field} class="filterName">
+														{filterItem.field}</div>&nbsp;
+													<div title={filterItem.operator} class="filterOprtrAndVal">
+														{filterItem.operator}&nbsp;{filterItem.value} </div>
+												</div>
+											</lightning-layout-item>
+											<lightning-layout-item padding="horizontal-small" size="2"
+												title={filterItem.id} id={filterItem.id}>
+												<lightning-button-icon icon-name="utility:close" title="Close"
+													data-id={filterItem.id} onclick={deleteFilterFromList}
+													variant="bare">
+												</lightning-button-icon>
+											</lightning-layout-item>
+										</lightning-layout>
+									</li>
+								</template>
+							</ul>
+						</template>
+						<lightning-combobox name="recordFilter" label="Filter Records" value={selectedFilter}
+							options={filterOptions} onchange={handleFilterChange}>
+						</lightning-combobox>
+
+						<template if:true={showFields}>
+							<div class="slds-p-around_medium">
+								<!-- First combobox for field selection -->
+								<lightning-combobox label="Fields" value={filterField} options={filterOptionss}
+									onchange={handleFieldChange}>
+								</lightning-combobox>
+							</div>
+							<div class="slds-p-around_medium">
+								<lightning-combobox label="Operator" value={filterOperator} options={operatorOptions}
+									onchange={handleSecondChange}>
+								</lightning-combobox>
+							</div>
+
+							<template if:true={isPicklistField}>
+								<!-- Render combobox for picklist values -->
+								<div class="slds-p-around_medium">
+									<lightning-combobox label="Value" value={filterValue} options={picklistValues}
+										onchange={handleInputChange}>
+									</lightning-combobox>
+								</div>
+							</template>
+							<template if:false={isPicklistField}>
+								<!-- Render input box for non-picklist fields -->
+								<div class="slds-p-around_medium">
+									<lightning-input label="Value" value={filterValue} onchange={handleInputChange}>
+									</lightning-input>
+								</div>
+							</template>
+
+							<!-- Second combobox for operator selection -->
+
+
+							<!-- Save and Cancel buttons -->
+							<div class="slds-p-around_medium">
+								<lightning-button variant="brand" label="Save" title="Successful action"
+										onclick={hideModalBox} class="slds-m-left_x-small">
+								</lightning-button>
+								<button class="slds-button slds-button_neutral" onclick={hideFilterBox}>Cancel</button>
+								<!-- <lightning-button variant="neutral" label="Clear" title="Clear all filters"
+                                onclick={handleClearFilters} class="slds-m-left_x-small">
+                            </lightning-button> -->
+							</div>
+						</template>
+						<div class="slds-p-top_x-small">
+							<a onclick={handelAddFilterClick} class="slds-float_left slds-m-left_small"
+								name="AddNewFilter">Add Filter</a>
+						</div>
+					</div>
+
+					<footer class="slds-modal__footer">
+						<button class="slds-button slds-button_neutral" onclick={handleClick}>Save</button>
+						<button class="slds-button slds-button_neutral" onclick={handleClearFilters}>Clear</button>
+					</footer>
+
+				</div>
+			</section>
+			<div class="slds-backdrop slds-backdrop_open"></div>
+		</template>
+		<!-- <div class="slds-m-around_medium">
+			<div class="slds-grid slds-wrap">
+				<div class="slds-col slds-size_11-of-12">
+					<span>
+						<lightning-input type="search" onchange={handleKeyChange} class="slds-m-bottom_small"
+							label="Search" value={searchKey}>
+
+						</lightning-input>
+					</span>
+				</div>
+				<div class="slds-col slds-size_1-of-12">
+					<span>
+						<lightning-button-icon icon-name='utility:filterList' style="margin-top: 25px"
+							alternative-text='filterList' size='small' class="slds-float_right" title='filterList'
+							onclick={showModalBox}></lightning-button-icon>
+					</span>
+				</div>
+			</div>
+			<div>
+			</div>
+			</div> -->
+			<!-- <template if:true={error}>
+				<div class="slds-text-color_error slds-m-bottom_medium">
+					{error}
+				</div>
+			</template> -->
+			<!-- <lightning-datatable data-id="table" key-field="Id" data={data} columns={columns} sorted-by={sortBy}
+			sorted-direction={sortDirection} onsort={doSorting} onrowselection={onRowSelection}
+				selected-rows={allSelectedRows} onrowaction={handleRowAction}>
+			</lightning-datatable>
+			</br> -->
+			
+			<!-- <lightning-layout horizontal-align="space">
+				<lightning-layout-item flexibility="auto">
+					<lightning-button label="Previous" icon-name="utility:chevronleft" onclick={previousHandler}>
+					</lightning-button>
+				</lightning-layout-item>
+				<lightning-layout-item flexibility="auto">
+					Page {page} of {totalPage}
+				</lightning-layout-item>
+				<lightning-layout-item flexibility="auto">
+					<lightning-button label="Next" icon-name="utility:chevronright" icon-position="right"
+						onclick={nextHandler}>
+					</lightning-button>
+				</lightning-layout-item>
+			</lightning-layout> -->
+			
+		</div>
+		
+	</lightning-card>
+</template>

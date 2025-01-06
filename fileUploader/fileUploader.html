@@ -1,0 +1,12 @@
+<template>
+    <lightning-card title="File Uploader">
+        <lightning-input type="file" label="Upload File" onchange={handleFileChange} multiple></lightning-input>
+        <lightning-button variant="neutral" label="Upload" onclick={handleUpload}></lightning-button>
+        <template if:true={uploadSuccess}>
+            <p class="slds-text-color_success">Upload Successful!</p>
+        </template>
+        <template if:true={uploadError}>
+            <p class="slds-text-color_error">Upload Failed: {errorMessage}</p>
+        </template>
+    </lightning-card>
+</template>

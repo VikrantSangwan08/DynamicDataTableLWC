@@ -1,0 +1,160 @@
+<template>
+ <!-- <template if:true={isModalOpen}> -->
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+
+                <!-- Modal/Popup Header -->
+                <div class="modal_header slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                    </button>
+                    <div class="slds-text-heading_medium" style="margin-left:30%">
+                        <h2 class="slds-truncate"><span> Manage Library Members</span></h2>
+                        <h2 class="slds-p-top_xxx-small slds-truncate">
+                            <!-- <span class="slds-p-right_xx-small"><span> -->
+                           
+                            <span ><lightning-icon icon-name="doctype:library_folder" size="small" class="left-icon"></lightning-icon><span class="slds-section-title">{libraryName}</span></span>
+                        </h2>
+                    </div>
+
+                </div>
+
+                <!-- Modal/Popup Body -->
+                <div class="slds-modal__content slds-p-around_medium " style="min-height: 200px;">
+                    <div class="slds-grid slds-gutters">
+                        <div style="padding-top:22px">
+                            <div onclick={handleMainDivClick} class="slds-box" style="padding: 0;">
+                                <div class="ischecked search-bar-container slds-col slds-size_3-of-4">
+
+                                    <!-- Left Icons -->
+                                    <div class=" border" onclick={handleIconclick}>
+                                        <lightning-icon if:true={icon} icon-name="standard:user" size="small"
+                                            class="left-icon"></lightning-icon>
+                                        <lightning-icon if:false={icon} icon-name="standard:orders" size="small"
+                                            class="left-icon"></lightning-icon>
+                                        <lightning-icon icon-name="utility:down" size="x-small" class="left-icon">
+                                        </lightning-icon>
+                                    </div>
+
+                                    <!-- Search Input -->
+                                    <template if:true={showSearchBar}>
+                                        <input type="text" label = "add members" title = "add members" class="search-input" value={searchValue} placeholder="Search..." onclick = {handleClick} oninput={handleChange} />
+                                    </template>
+                                    <!-- Right Search Icon -->
+                                    <lightning-icon icon-name="utility:search" size="xx_small" class="right-icon">
+                                    </lightning-icon>
+
+                                </div>
+
+                                <div if:true={check} class="ischecked"
+                                    style="background-color:white;width:100px;z-index:1">
+                                    <table class=" slds-table slds-table_cell-buffer slds-table_bordered">
+                                        <tbody>
+                                             <tr class="slds-hint-parent" data-name="Group" onclick={handleselect}>
+                                                <td style="display: flex;float:left">
+                                                    <lightning-icon icon-name="standard:orders" size="small"
+                                                        class="right-icon"></lightning-icon>
+                                                    <h1>Public Groups</h1>
+                                                </td>
+                                            </tr>
+                                            <tr class="slds-hint-parent" data-name="User" onclick={handleselect}>
+                                                <td style="display: flex;float:left">
+                                                    <lightning-icon icon-name="standard:user" size="small"
+                                                        class="left-icon"></lightning-icon>
+                                                    <h1>People</h1>
+                                                </td>
+                                            </tr>
+                                           
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- <div if:true={showPillContainer}> -->
+                                <div if:false={disableAdd}>  
+                                    <lightning-pill-container items={selectedUsers} onitemremove={handleItemRemove}>
+                                    </lightning-pill-container>
+                                </div>
+                                <div if:true={userOptions} class="Pravin slds-scrollable"
+                                    style="position: fixed;max-height: 200px; background:white; z-index: 1; width: 63%">
+                                    <template for:each={userOptions} for:item="user">
+                                        <ul class="slds-listbox slds-listbox_vertical" role="presentation"
+                                            key={user.Id}>
+                                            <li key={user.Id} role="presentation" class="slds-listbox__item"
+                                                onclick={clickHandler}>
+                                                <div id="option226"
+                                                    class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                    role="option">
+                                                    <span class="slds-media__figure slds-listbox__option-icon">
+												<span class="slds-icon_container slds-icon-standard-account">
+                                                    
+                                                        <lightning-icon if:true={user.isUser} icon-name="standard:user" size="small"
+                                            class="left-icon"></lightning-icon>
+                                        <lightning-icon if:false={user.isUser} icon-name="standard:orders" size="small"
+                                            class="left-icon"></lightning-icon>
+
+												</span>
+                                                    </span>
+                                                    <span class="slds-media__body" data-recid={user.Id}> {user.Name}</span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </template>
+                                </div>
+                            </div>
+
+                            </br>
+
+                          
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <lightning-combobox label="Access" value={selectedAccess} placeholder="Select Access Level"
+                                options={accessOptions} onchange={handleAccessChange}></lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="slds-m-top_small slds-float_left">
+                        <lightning-button label="Add" variant="brand" disabled={disableAdd} onclick={addMember}>
+                        </lightning-button>
+                    </div>
+                     <!-- Current Members Section -->
+                    <div class="slds-m-top_medium">
+                        <div style="background:lightgrey">
+                            <p style="font-size:153%;margin-left:2%">Current Members</p>
+                        </div>
+                        <div class="slds-scrollable_y" style="max-height: 200px;">
+                            <template if:true={members}>
+                                <template for:each={members} for:item="member">
+                                    <div key={member.cWMId}
+                                        class="slds-grid slds-gutters slds-p-around_x-small row-background">
+                                        <div class="slds-col slds-size_2-of-4 slds-grid">
+                                           <lightning-icon if:true={member.isUser} icon-name="standard:user" size="small"
+                                            class="left-icon"></lightning-icon>
+                                        <lightning-icon if:false={member.isUser} icon-name="standard:orders" size="small"
+                                            class="left-icon"></lightning-icon>
+                                            <span>{member.memberName}</span>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4 slds-p-bottom_small">
+                                            <lightning-combobox data-id={member.cWMId} value={member.memberRole}
+                                                options={accessOptions} onchange={handleMemberRoleChange}>
+                                            </lightning-combobox>
+                                        </div>
+                                        <div class="slds-col slds-size_3-of-12 slds-text-align_right">
+                                            <button class="slds-button slds-button_icon slds-button_icon-border-filled" title="Remove" data-id={member.cWMId} data-memberid={member.memberId} onclick={removeMember}>
+                                                <lightning-icon icon-name="utility:close" alternative-text="Remove" size="x-small"></lightning-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal/Popup Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={closeModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    <!-- </template> -->
+</template>

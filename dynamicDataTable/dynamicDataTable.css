@@ -1,0 +1,15 @@
+.custom-container{
+	color : black;
+}
+.truncate-data {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* Adjust based on the desired cell width */
+    display: block;
+}
+
+.image {
+    height: 30px;
+    width: 30px;
+  }

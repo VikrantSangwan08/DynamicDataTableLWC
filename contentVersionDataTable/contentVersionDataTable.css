@@ -1,0 +1,10 @@
+.flex-container {
+    display: flex;
+    align-items: center; /* Aligns items vertically in the center */
+    gap: 10px; /* Optional: Adds space between items */
+}
+
+.slds-modal__container {
+    max-width: 40rem !important;
+    width: 40rem !important;
+}

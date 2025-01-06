@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+	<apiVersion>62.0</apiVersion>
+	<isExposed>true</isExposed>
+	<targets>
+		<target>lightning__AppPage</target>
+		<target>lightning__HomePage</target>
+		<target>lightning__RecordPage</target>
+		<target>lightning__Tab</target>
+	</targets>
+	<targetConfigs>  
+        <targetConfig targets="lightning__HomePage,lightning__RecordPage,lightning__AppPage">
+
+			<property name="objAPIName" type="String"  label="Select the Object Name" required="true"/>
+			<property name="objFieldsName" type="String" label="Enter the Fields Name in comma sepeare" placeholder="FirstName,Lastname, Email,.." required="true"/>
+			<property name="PageCount" type="Integer" label="Enter no of Records you want per page" required="true" default="10"/>
+
+			
+             <!-- <property name="objects" type="String" default="" label="Enter ImObject Name"/>  -->
+        </targetConfig>
+    </targetConfigs>
+
+</LightningComponentBundle>

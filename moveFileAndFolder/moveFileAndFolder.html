@@ -1,0 +1,46 @@
+<template>
+    <template if:true={allVariables.showMoveModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Header -->
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" alternative-text="Close" onclick={hideModalBox}
+                        class="slds-modal__close"></lightning-button-icon>
+                    <h2 class="slds-text-heading_medium">Move File "{allVariables.fileName}"</h2>
+                </header>
+
+                <!-- Modal/Popup Body -->
+                <div class="slds-modal__content slds-p-around_medium" style="background-color: rgb(243, 243, 243)">
+                    <nav aria-label="Breadcrumbs">
+                        <ol class="slds-breadcrumb slds-list_horizontal slds-wrap">
+                            <li class="slds-breadcrumb__item slds-text-title_caps">Library :
+                                {allVariables.libraryName}
+                            </li>
+                        </ol>
+                    </nav>
+                    <lightning-icon class="slds-p-left_medium slds-p-top_small" style="cursor: pointer"
+                        icon-name='utility:back' alternative-text='back' size='small' title='back'
+                        onclick={handleBackButton}>
+                    </lightning-icon>
+                    <!-- <lightning-icon class="slds-p-left_medium slds-p-top_small" style="cursor: pointer" icon-name='utility:back'
+                            alternative-text='back' size='small' title='back' onclick={handleTestBAck}>
+                        </lightning-icon> -->
+                </div>
+                <div>
+                    <lightning-datatable key-field="Id" data={allVariables.data} columns={columns2}
+                        onrowaction={handleRowAction} hide-checkbox-column="true">
+                    </lightning-datatable>
+                </div>
+
+                <!-- Modal/Popup Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={hideModalBox}></lightning-button>
+                    <lightning-button class="slds-m-left_small" variant="brand" label="Move Here" onclick={handleMove}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
